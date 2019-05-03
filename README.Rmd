@@ -11,6 +11,12 @@ library(ggplot2)
 library(here)
 library(stringr)
 library(knitr)
+library(ggcorrplot)
+source("../../theme.R")
+windows.options(antialias = "cleartype")
+options(device = Cairo::CairoSVG)
+
+knitr::opts_chunk$set(fig.width=10, fig.height=7, dev = "svg")
 
 ```
 
@@ -19,6 +25,8 @@ library(knitr)
 ## About the Data
 ```{r import-data, cache=TRUE}
 chi_crime_data = readRDS(here("Data", "chi_crime_data_cleaned.rds"))
+chi_crime_data$Beat = chi_crime_data$Beat %>% as.numeric()
+chi_crime_data$District = chi_crime_data$District %>% as.numeric()
 
 data_sample = chi_crime_data %>% head(5) 
 data_sample$Date = as.character(data_sample$Date)
@@ -29,10 +37,13 @@ num_vars = chi_crime_data[1,] %>% unlist() %>% length()
 ```
 The data set has `r num_obs` observations and `r num_vars` variables.
 
-```{r recoding-data, cache=TRUE}
+## Descriptive Statistics 
+```{r descr-stats, cache=TRUE}
+cor_matrix = chi_crime_data %>% select(-c("ID", "Case Number", "Block", "IUCR", "Primary Type", "Description", "Location Description", "FBI Code", "X Coordinate", "Y Coordinate", "Updated On", "Location", "Historical Wards 2003-2015", "Community Areas", "geometry")) %>% mutate_all(function(x) as.numeric(x)) %>% na.omit() %>% cor() %>% round(1)
+prob_mat = chi_crime_data %>% select(-c("ID", "Case Number", "Block", "IUCR", "Primary Type", "Description", "Location Description", "FBI Code", "X Coordinate", "Y Coordinate", "Updated On", "Location", "Historical Wards 2003-2015", "Community Areas", "geometry")) %>% mutate_all(function(x) as.numeric(x)) %>% na.omit() %>% cor_pmat()
+ggcorrplot(cor_matrix, p.mat = prob_mat, hc.order = TRUE,
+    type = "lower", insig = "blank", lab = TRUE, colors = color_pal(3)) + theme_master() + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + labs(title = "Few Correlations In Chicago Crime Data" , legend = "Correlation", x = "", y = "")
 ```
-
-## Cleaning the Data
 
 ## Initial Analysis
 
