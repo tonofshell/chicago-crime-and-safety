@@ -5,11 +5,32 @@ output: github_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(ggplot2)
+library(here)
+library(stringr)
+library(knitr)
+
 ```
 
 ## Background
 
 ## About the Data
+```{r import-data, cache=TRUE}
+chi_crime_data = readRDS(here("Data", "chi_crime_data_cleaned.rds"))
+
+data_sample = chi_crime_data %>% head(5) 
+data_sample$Date = as.character(data_sample$Date)
+data_sample %>% kable(format = "markdown")
+
+num_obs= chi_crime_data$ID %>% length()
+num_vars = chi_crime_data[1,] %>% unlist() %>% length()
+```
+The data set has `r num_obs` observations and `r num_vars` variables.
+
+```{r recoding-data, cache=TRUE}
+```
 
 ## Cleaning the Data
 
