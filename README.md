@@ -1,46 +1,11 @@
-Chicago Crime and Safety
-================
+# Chicago Crime and Safety
 
-## Background
+## About
 
-## About the Data
+This project investigates the differences between commonly held notions of safety and actual safety in Chicago. It looks at common culutral claims as well as [Streetscore Data](http://streetscore.media.mit.edu/about.html) and compares them to actual crime data from the City of Chicago Open Data Portal. These relationships are explored visually through time and space using static data visualizations generated using ggplot with R. All code and files for the project are available in the repo, except for the raw crime data dump from the Chicago Open Data Portal, as it exceeds GitHub's file size limit.
 
-``` r
-chi_crime_data = readRDS(here("Data", "chi_crime_data_cleaned.rds"))
-chi_crime_data$Beat = chi_crime_data$Beat %>% as.numeric()
-chi_crime_data$District = chi_crime_data$District %>% as.numeric()
-
-data_sample = chi_crime_data %>% head(5) 
-data_sample$Date = as.character(data_sample$Date)
-data_sample %>% kable(format = "markdown")
-```
-
-|       ID | Case Number | Date       |     Time | Day    | Month    | TimeOfDay | Night | Block                  | IUCR | Primary Type       | Description                          | Location Description | Violent Crime | In Vehicle | In Building | Arrest | Domestic | Beat | District | Ward | Community Area | FBI Code | X Coordinate | Y Coordinate | Year | Updated On             | Location                      | Historical Wards 2003-2015 | Zip Codes | Community Areas | geometry                       |
-| -------: | :---------- | :--------- | -------: | :----- | :------- | :-------- | :---- | :--------------------- | :--- | :----------------- | :----------------------------------- | :------------------- | :------------ | :--------- | :---------- | :----- | :------- | ---: | -------: | ---: | -------------: | :------- | -----------: | -----------: | ---: | :--------------------- | :---------------------------- | -------------------------: | --------: | --------------: | :----------------------------- |
-| 11561837 | JC110056    | 2018-12-31 | 23.98333 | Monday | December | Evening   | TRUE  | 013XX W 72ND ST        | 1153 | DECEPTIVE PRACTICE | FINANCIAL IDENTITY THEFT OVER $ 300  | NA                   | FALSE         | FALSE      | FALSE       | FALSE  | FALSE    |  734 |        7 |    6 |             67 | 11       |      1168573 |      1857018 | 2018 | 01/17/2019 02:26:36 PM | (41.763181359, -87.657709477) |                         17 |     22257 |              65 | c(41.763181359, -87.657709477) |
-| 11556487 | JC104662    | 2018-12-31 | 23.98333 | Monday | December | Evening   | TRUE  | 112XX S SACRAMENTO AVE | 1320 | CRIMINAL DAMAGE    | TO VEHICLE                           | STREET               | TRUE          | FALSE      | FALSE       | FALSE  | FALSE    | 2211 |       22 |   19 |             74 | 14       |      1158309 |      1829936 | 2018 | 01/10/2019 03:16:50 PM | (41.689078832, -87.696064026) |                         33 |      4447 |              73 | c(41.689078832, -87.696064026) |
-| 11552699 | JC100043    | 2018-12-31 | 23.95000 | Monday | December | Evening   | TRUE  | 084XX S SANGAMON ST    | 1310 | CRIMINAL DAMAGE    | TO PROPERTY                          | APARTMENT            | TRUE          | FALSE      | TRUE        | FALSE  | FALSE    |  613 |        6 |   21 |             71 | 14       |      1171454 |      1848783 | 2018 | 01/10/2019 03:16:50 PM | (41.740520866, -87.647390719) |                         18 |     21554 |              70 | c(41.740520866, -87.647390719) |
-| 11552724 | JC100006    | 2018-12-31 | 23.93333 | Monday | December | Evening   | TRUE  | 018XX S ALLPORT ST     | 0440 | BATTERY            | AGG: HANDS/FIST/FEET NO/MINOR INJURY | OTHER                | TRUE          | FALSE      | FALSE       | TRUE   | FALSE    | 1233 |       12 |   25 |             31 | 08B      |      1168327 |      1891230 | 2018 | 01/10/2019 03:16:50 PM | (41.857068095, -87.657625201) |                          8 |     14920 |              33 | c(41.857068095, -87.657625201) |
-| 11552731 | JC100031    | 2018-12-31 | 23.91667 | Monday | December | Evening   | TRUE  | 078XX S SANGAMON ST    | 0486 | BATTERY            | DOMESTIC BATTERY SIMPLE              | APARTMENT            | TRUE          | FALSE      | TRUE        | FALSE  | FALSE    |  621 |        6 |   17 |             71 | 08B      |      1171332 |      1852934 | 2018 | 01/10/2019 03:16:50 PM | (41.75191443, -87.647716532)  |                         17 |     21554 |              70 | c(41.75191443, -87.647716532)  |
-
-``` r
-num_obs= chi_crime_data$ID %>% length()
-num_vars = chi_crime_data[1,] %>% unlist() %>% length()
-```
-
-The data set has 1327334 observations and 33 variables.
-
-## Descriptive Statistics
-
-``` r
-cor_matrix = chi_crime_data %>% select(-c("ID", "Case Number", "Block", "IUCR", "Primary Type", "Description", "Location Description", "FBI Code", "X Coordinate", "Y Coordinate", "Updated On", "Location", "Historical Wards 2003-2015", "Community Areas", "geometry")) %>% mutate_all(function(x) as.numeric(x)) %>% na.omit() %>% cor() %>% round(1)
-prob_mat = chi_crime_data %>% select(-c("ID", "Case Number", "Block", "IUCR", "Primary Type", "Description", "Location Description", "FBI Code", "X Coordinate", "Y Coordinate", "Updated On", "Location", "Historical Wards 2003-2015", "Community Areas", "geometry")) %>% mutate_all(function(x) as.numeric(x)) %>% na.omit() %>% cor_pmat()
-ggcorrplot(cor_matrix, p.mat = prob_mat, hc.order = TRUE,
-    type = "lower", insig = "blank", lab = TRUE, colors = color_pal(3)) + theme_master() + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + labs(title = "Few Correlations In Chicago Crime Data" , legend = "Correlation", x = "", y = "")
-```
-
-![](README_files/figure-gfm/descr-stats-1.svg)<!-- -->
-
-## Initial Analysis
-
-## Prediciton
+## Important Files
+- paper.pdf: Final knitted paper
+- paper.rmd: RMarkdown document of paper
+- data_prep.R: R script to convert and clean raw data from the Open Data Portal to the dataset used
+- chi_crime_data_cleaned.rds: Cleaned dataset used for analysis
