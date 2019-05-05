@@ -5,3 +5,9 @@
 
 Data/Crimes_2001_on_4-26-19.csv
 out.txt
+README_cache/
+README_files/
+paper_cache/
+paper_files/
+Rplots.pdf
+Rplots.svg
